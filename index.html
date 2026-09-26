@@ -48,7 +48,7 @@
       const input = document.getElementById('json-input').value;
       const status = document.getElementById('status-msg');
       try {
-        const json = JSON.parse(input);
+        csv += keys.map(k => JSON.stringify(row[k] !== undefined && row[k] !== null ? row[k] : '')).join(',') + '\n';
         if (!Array.isArray(json)) {
           status.innerText = "Error: Input must be a JSON array of objects.";
           status.className = "text-sm font-medium text-red-600";
