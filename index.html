@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fast JSON to CSV Converter & Data Cleaner</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
+  <header class="bg-blue-600 text-white py-6 shadow-md">
+    <div class="max-w-4xl mx-auto px-4">
+      <h1 class="text-2xl font-bold">Fast JSON to CSV Converter</h1>
+      <p class="text-blue-100 text-sm mt-1">Clean, convert, and format your JSON data instantly in your browser.</p>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-grow w-full">
+    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+      <label for="json-input" class="block font-medium mb-2">Paste JSON Data Here:</label>
+      <textarea id="json-input" rows="8" class="w-full p-3 border border-gray-300 rounded-md font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder='[{"name": "John", "age": 30}, {"name": "Jane", "age": 25}]'></textarea>
+      
+      <div class="mt-4 flex flex-wrap gap-4 items-center justify-between">
+        <button onclick="convertData()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-md transition-colors">Convert to CSV</button>
+        <span id="status-msg" class="text-sm font-medium text-gray-600"></span>
+      </div>
+    </div>
+
+    <div id="output-section" class="mt-8 bg-white p-6 rounded-lg shadow-sm border border-gray-200 hidden">
+      <h2 class="text-lg font-bold mb-2">CSV Output:</h2>
+      <textarea id="csv-output" rows="8" readonly class="w-full p-3 border border-gray-300 rounded-md font-mono text-sm bg-gray-50"></textarea>
+      
+      <div class="mt-4 flex justify-between items-center">
+        <button onclick="downloadCSV()" class="bg-green-600 hover:bg-green-700 text-white font-medium px-5 py-2.5 rounded-md transition-colors">Download CSV</button>
+        <div class="text-right">
+          <p class="text-xs text-gray-500 mb-1">Need batch processing over 10MB?</p>
+          <button onclick="alert('Stripe Live Link will be configured on Day 2!')" class="bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-md text-sm transition-colors">Upgrade to Pro ($4.99)</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-gray-100 border-t border-gray-200 py-4 text-center text-xs text-gray-500">
+    &copy; 2026 Data Tools. 100% Client-Side & Secure.
+  </footer>
+
+  <script>
+    function convertData() {
+      const input = document.getElementById('json-input').value;
+      const status = document.getElementById('status-msg');
+      try {
+        const json = JSON.parse(input);
+        if (!Array.isArray(json)) {
+          status.innerText = "Error: Input must be a JSON array of objects.";
+          status.className = "text-sm font-medium text-red-600";
+          return;
+        }
+        const keys = Object.keys(json[0]);
+        let csv = keys.join(',') + '\n';
+        json.forEach(row => {
+          csv += keys.map(k => JSON.stringify(row[k] || '')).join(',') + '\n';
+        });
+        document.getElementById('csv-output').value = csv;
+        document.getElementById('output-section').classList.remove('hidden');
+        status.innerText = "Conversion successful!";
+        status.className = "text-sm font-medium text-green-600";
+      } catch (e) {
+        status.innerText = "Error: Invalid JSON format.";
+        status.className = "text-sm font-medium text-red-600";
+      }
+    }
+
+    function downloadCSV() {
+      const text = document.getElementById('csv-output').value;
+      const blob = new Blob([text], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('href', url);
+      a.setAttribute('download', 'converted_data.csv');
+      a.click();
+    }
+  </script>
+</body>
+</html>
