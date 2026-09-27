@@ -3,20 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Data Tools - Fast Client-Side JSON to CSV Converter</title>
+  <title>Data Tools - Private JSON to CSV Converter</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
 
   <!-- Header -->
-  <header class="border-b border-slate-800 bg-slate-950 px-6 py-4 flex justify-between items-center">
+  <header class="border-b border-slate-800 bg-slate-950 px-6 py-4 flex flex-wrap justify-between items-center gap-4">
     <div class="flex items-center space-x-2">
       <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center font-bold text-white">D</div>
       <span class="text-xl font-bold tracking-tight text-white">Data Tools</span>
       <span class="bg-slate-800 text-slate-400 text-xs px-2 py-0.5 rounded border border-slate-700">Free Tier</span>
     </div>
-    <div>
-      <a href="mailto:neatejohn37@gmail.com ?subject=Data Tools Pro Access Request&body=Hi, I am interested in Pro access for batch processing JSON data." class="bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-md text-sm transition-colors inline-block text-center">Upgrade to Pro ($4.99)</a>
+    <div class="flex items-center space-x-3">
+      <span class="text-xs text-slate-400 hidden sm:inline">Need batch files over 10MB or JSON flattening?</span>
+      <a href="mailto:YOUR_EMAIL_HERE?subject=Data Tools Pro Access Request&body=Hi, I am interested in Pro access for batch processing and advanced JSON flattening." class="bg-purple-600 hover:bg-purple-500 text-white font-medium px-4 py-2 rounded-md text-sm transition-colors inline-block text-center shadow-lg shadow-purple-900/20">Upgrade to Pro ($4.99)</a>
     </div>
   </header>
 
@@ -29,15 +30,25 @@
 
     <!-- Converter Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+      
       <!-- Input Column -->
       <div class="flex flex-col space-y-2">
-        <label for="jsonInput" class="text-sm font-semibold text-slate-300">JSON Input</label>
+        <div class="flex justify-between items-center">
+          <label for="jsonInput" class="text-sm font-semibold text-slate-300">JSON Input</label>
+          <button onclick="clearAll()" class="text-xs text-slate-400 hover:text-slate-200 transition-colors">Clear Input</button>
+        </div>
         <textarea id="jsonInput" placeholder='Paste JSON array here, e.g. [{"id": 1, "name": "Item"}]' class="flex-1 w-full bg-slate-950 border border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none min-h-[350px]"></textarea>
       </div>
 
       <!-- Output Column -->
       <div class="flex flex-col space-y-2">
-        <label for="csvOutput" class="text-sm font-semibold text-slate-300">CSV Output</label>
+        <div class="flex justify-between items-center">
+          <label for="csvOutput" class="text-sm font-semibold text-slate-300">CSV Output</label>
+          <div class="flex space-x-2">
+            <button id="copyBtn" onclick="copyCsv()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded border border-slate-700 transition-colors">Copy CSV</button>
+            <button id="downloadBtn" onclick="downloadCsv()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded border border-slate-700 transition-colors">Download CSV</button>
+          </div>
+        </div>
         <textarea id="csvOutput" readonly placeholder="Converted CSV data will appear here..." class="flex-1 w-full bg-slate-950 border border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-200 focus:outline-none resize-none min-h-[350px]"></textarea>
       </div>
     </div>
@@ -48,6 +59,32 @@
         Convert to CSV
       </button>
     </div>
+
+    <!-- Feature Matrix / Value Proposition -->
+    <div class="mt-12 border-t border-slate-800 pt-8">
+      <h2 class="text-lg font-bold text-slate-200 text-center mb-6">Free vs Pro Features</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div class="bg-slate-950 p-5 rounded-lg border border-slate-800">
+          <h3 class="font-bold text-purple-400 mb-2">Free Tier (Current)</h3>
+          <ul class="text-xs text-slate-400 space-y-2">
+            <li>✓ 100% Client-Side Privacy (Zero server logs)</li>
+            <li>✓ High-Precision Large Integer & String Preservation</li>
+            <li>✓ Instant Copy & Download CSV</li>
+            <li>✓ Automatic Schema Union across objects</li>
+          </ul>
+        </div>
+        <div class="bg-slate-950 p-5 rounded-lg border border-purple-900/50 relative">
+          <span class="absolute top-3 right-3 bg-purple-900/50 text-purple-300 text-[10px] font-bold px-2 py-0.5 rounded border border-purple-700">$4.99 One-Time</span>
+          <h3 class="font-bold text-white mb-2">Pro Unlock</h3>
+          <ul class="text-xs text-slate-300 space-y-2">
+            <li>★ Direct JSON File Drag & Drop Upload</li>
+            <li>★ Auto-Flattening for Deeply Nested API Objects</li>
+            <li>★ API Wrapper Detection (Extract `data[]` or `results[]`)</li>
+            <li>★ Large Dataset Batch Processing (>10MB)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </main>
 
   <!-- Footer -->
@@ -57,20 +94,26 @@
 
   <!-- Converter Logic -->
   <script>
+    // Preserve large integers (> 15 digits) by wrapping them in quotes before JSON.parse
+    function preserveLargeIntegers(jsonStr) {
+      return jsonStr.replace(/:\s*(-?\d{16,})/g, ': "$1"');
+    }
+
     function convertJsonToCsv() {
-      const input = document.getElementById('jsonInput').value.trim();
       const outputArea = document.getElementById('csvOutput');
+      let rawInput = document.getElementById('jsonInput').value.trim();
       
-      if (!input) {
+      if (!rawInput) {
         outputArea.value = "Error: Input box is empty.";
         return;
       }
 
       try {
-        // 1. Parse JSON safely
-        let parsed = JSON.parse(input);
+        // Pre-pass to prevent large integer precision degradation
+        const sanitizedInput = preserveLargeIntegers(rawInput);
+        let parsed = JSON.parse(sanitizedInput);
         
-        // If user pasted a single object, wrap it in an array
+        // Single object wrapper
         if (!Array.isArray(parsed)) {
           if (typeof parsed === 'object' && parsed !== null) {
             parsed = [parsed];
@@ -85,24 +128,36 @@
           return;
         }
 
-        // 2. Extract all unique keys across all objects
-        const keys = Array.from(new Set(parsed.flatMap(obj => typeof obj === 'object' && obj !== null ? Object.keys(obj) : [])));
+        // P0 Validation: Ensure every record is a valid object and not null or primitive
+        for (let i = 0; i < parsed.length; i++) {
+          const item = parsed[i];
+          if (item === null) {
+            outputArea.value = `Error: Invalid record at array index ${i}. Item is null (must be an object).`;
+            return;
+          }
+          if (typeof item !== 'object') {
+            outputArea.value = `Error: Invalid record at array index ${i}. Expected object, received ${typeof item} ("${item}").`;
+            return;
+          }
+        }
+
+        // Extract all unique keys across all objects
+        const keys = Array.from(new Set(parsed.flatMap(obj => Object.keys(obj))));
 
         if (keys.length === 0) {
           outputArea.value = "Error: No valid key-value pairs found in objects.";
           return;
         }
 
-        // 3. Build CSV Header
+        // Build CSV Header
         let csv = keys.map(k => `"${String(k).replace(/"/g, '""')}"`).join(',') + '\n';
 
-        // 4. Build CSV Rows
+        // Build CSV Rows
         parsed.forEach(row => {
           const line = keys.map(k => {
             const val = row[k];
             if (val === undefined || val === null) return '""';
             if (typeof val === 'boolean' || typeof val === 'number') return val;
-            // Escape quotes and wrap strings/objects in double quotes
             const str = typeof val === 'object' ? JSON.stringify(val) : String(val);
             return `"${str.replace(/"/g, '""')}"`;
           }).join(',');
@@ -114,6 +169,41 @@
       } catch (err) {
         outputArea.value = "Error: Invalid JSON syntax. " + err.message;
       }
+    }
+
+    function clearAll() {
+      document.getElementById('jsonInput').value = '';
+      document.getElementById('csvOutput').value = '';
+    }
+
+    function copyCsv() {
+      const csvOutput = document.getElementById('csvOutput');
+      if (!csvOutput.value || csvOutput.value.startsWith('Error:')) return;
+      
+      navigator.clipboard.writeText(csvOutput.value).then(() => {
+        const btn = document.getElementById('copyBtn');
+        const originalText = btn.innerText;
+        btn.innerText = 'Copied!';
+        btn.classList.add('bg-green-700', 'text-white');
+        setTimeout(() => {
+          btn.innerText = originalText;
+          btn.classList.remove('bg-green-700', 'text-white');
+        }, 2000);
+      });
+    }
+
+    function downloadCsv() {
+      const csvOutput = document.getElementById('csvOutput');
+      if (!csvOutput.value || csvOutput.value.startsWith('Error:')) return;
+
+      const blob = new Blob([csvOutput.value], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `data_export_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   </script>
 </body>
