@@ -22,14 +22,14 @@
   </header>
 
   <!-- Main Content -->
-  <main class="flex-1 max-w-6xl w-full mx-auto px-6 py-8 flex flex-col space-y-6">
+  <main class="flex-1 max-w-6xl w-full mx-auto px-6 py-8 flex flex-col space-y-8">
     <div class="text-center max-w-2xl mx-auto space-y-2">
       <h1 class="text-3xl font-extrabold text-white">Client-Side JSON to CSV Converter</h1>
       <p class="text-slate-400 text-sm">100% private. Your data never leaves your browser—conversion happens locally via JavaScript.</p>
     </div>
 
-    <!-- Converter Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+    <!-- Converter Grid (Expanded 600px Height) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       
       <!-- Input Column -->
       <div class="flex flex-col space-y-2">
@@ -37,7 +37,7 @@
           <label for="jsonInput" class="text-sm font-semibold text-slate-300">JSON Input</label>
           <button onclick="clearAll()" class="text-xs text-slate-400 hover:text-slate-200 transition-colors">Clear Input</button>
         </div>
-        <textarea id="jsonInput" placeholder='Paste JSON array here, e.g. [{"id": 1, "name": "Item"}]' class="flex-1 w-full bg-slate-950 border border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none min-h-[350px]"></textarea>
+        <textarea id="jsonInput" placeholder='Paste JSON array here, e.g. [{"id": 1, "name": "Item"}]' class="w-full bg-slate-950 border border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-y h-[600px]"></textarea>
       </div>
 
       <!-- Output Column -->
@@ -49,34 +49,34 @@
             <button id="downloadBtn" onclick="downloadCsv()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded border border-slate-700 transition-colors">Download CSV</button>
           </div>
         </div>
-        <textarea id="csvOutput" readonly placeholder="Converted CSV data will appear here..." class="flex-1 w-full bg-slate-950 border border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-200 focus:outline-none resize-none min-h-[350px]"></textarea>
+        <textarea id="csvOutput" readonly placeholder="Converted CSV data will appear here..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-200 focus:outline-none resize-y h-[600px]"></textarea>
       </div>
     </div>
 
     <!-- Action Button -->
-    <div class="flex justify-center pt-2">
-      <button onclick="convertJsonToCsv()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-8 rounded-lg text-base shadow-lg hover:shadow-purple-500/20 transition-all cursor-pointer">
+    <div class="flex justify-center py-4">
+      <button onclick="convertJsonToCsv()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-3.5 px-10 rounded-lg text-lg shadow-xl hover:shadow-purple-500/20 transition-all cursor-pointer">
         Convert to CSV
       </button>
     </div>
 
-    <!-- Feature Matrix / Value Proposition -->
-    <div class="mt-12 border-t border-slate-800 pt-8">
-      <h2 class="text-lg font-bold text-slate-200 text-center mb-6">Free vs Pro Features</h2>
+    <!-- Feature Matrix / Value Proposition (Scrolled Bottom Section) -->
+    <div class="mt-16 border-t border-slate-800 pt-12 pb-8">
+      <h2 class="text-xl font-bold text-slate-200 text-center mb-8">Free vs Pro Features</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        <div class="bg-slate-950 p-5 rounded-lg border border-slate-800">
-          <h3 class="font-bold text-purple-400 mb-2">Free Tier (Current)</h3>
-          <ul class="text-xs text-slate-400 space-y-2">
+        <div class="bg-slate-950 p-6 rounded-lg border border-slate-800">
+          <h3 class="font-bold text-purple-400 text-base mb-3">Free Tier (Current)</h3>
+          <ul class="text-sm text-slate-400 space-y-2.5">
             <li>✓ 100% Client-Side Privacy (Zero server logs)</li>
             <li>✓ High-Precision Large Integer & String Preservation</li>
             <li>✓ Instant Copy & Download CSV</li>
             <li>✓ Automatic Schema Union across objects</li>
           </ul>
         </div>
-        <div class="bg-slate-950 p-5 rounded-lg border border-purple-900/50 relative">
-          <span class="absolute top-3 right-3 bg-purple-900/50 text-purple-300 text-[10px] font-bold px-2 py-0.5 rounded border border-purple-700">$4.99 One-Time</span>
-          <h3 class="font-bold text-white mb-2">Pro Unlock</h3>
-          <ul class="text-xs text-slate-300 space-y-2">
+        <div class="bg-slate-950 p-6 rounded-lg border border-purple-900/50 relative">
+          <span class="absolute top-4 right-4 bg-purple-900/50 text-purple-300 text-xs font-bold px-2.5 py-1 rounded border border-purple-700">$4.99 One-Time</span>
+          <h3 class="font-bold text-white text-base mb-3">Pro Unlock</h3>
+          <ul class="text-sm text-slate-300 space-y-2.5">
             <li>★ Direct JSON File Drag & Drop Upload</li>
             <li>★ Auto-Flattening for Deeply Nested API Objects</li>
             <li>★ API Wrapper Detection (Extract `data[]` or `results[]`)</li>
@@ -88,7 +88,7 @@
   </main>
 
   <!-- Footer -->
-  <footer class="border-t border-slate-800 bg-slate-950 py-4 text-center text-xs text-slate-500">
+  <footer class="border-t border-slate-800 bg-slate-950 py-6 text-center text-xs text-slate-500">
     <p>&copy; Data Tools. All processing remains entirely client-side.</p>
   </footer>
 
