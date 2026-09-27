@@ -3,80 +3,117 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fast JSON to CSV Converter & Data Cleaner</title>
+  <title>Data Tools - Fast Client-Side JSON to CSV Converter</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
-  <header class="bg-blue-600 text-white py-6 shadow-md">
-    <div class="max-w-4xl mx-auto px-4">
-      <h1 class="text-2xl font-bold">Fast JSON to CSV Converter</h1>
-      <p class="text-blue-100 text-sm mt-1">Clean, convert, and format your JSON data instantly in your browser.</p>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-950 px-6 py-4 flex justify-between items-center">
+    <div class="flex items-center space-x-2">
+      <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center font-bold text-white">D</div>
+      <span class="text-xl font-bold tracking-tight text-white">Data Tools</span>
+      <span class="bg-slate-800 text-slate-400 text-xs px-2 py-0.5 rounded border border-slate-700">Free Tier</span>
+    </div>
+    <div>
+      <a href="mailto:YOUR_EMAIL_HERE?subject=Data Tools Pro Access Request&body=Hi, I am interested in Pro access for batch processing JSON data." class="bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-md text-sm transition-colors inline-block text-center">Upgrade to Pro ($4.99)</a>
     </div>
   </header>
 
-  <main class="max-w-4xl mx-auto px-4 py-8 flex-grow w-full">
-    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-      <label for="json-input" class="block font-medium mb-2">Paste JSON Data Here:</label>
-      <textarea id="json-input" rows="8" class="w-full p-3 border border-gray-300 rounded-md font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder='[{"name": "John", "age": 30}, {"name": "Jane", "age": 25}]'></textarea>
-      
-      <div class="mt-4 flex flex-wrap gap-4 items-center justify-between">
-        <button onclick="convertData()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-md transition-colors">Convert to CSV</button>
-        <span id="status-msg" class="text-sm font-medium text-gray-600"></span>
+  <!-- Main Content -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-6 py-8 flex flex-col space-y-6">
+    <div class="text-center max-w-2xl mx-auto space-y-2">
+      <h1 class="text-3xl font-extrabold text-white">Client-Side JSON to CSV Converter</h1>
+      <p class="text-slate-400 text-sm">100% private. Your data never leaves your browser—conversion happens locally via JavaScript.</p>
+    </div>
+
+    <!-- Converter Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+      <!-- Input Column -->
+      <div class="flex flex-col space-y-2">
+        <label for="jsonInput" class="text-sm font-semibold text-slate-300">JSON Input</label>
+        <textarea id="jsonInput" placeholder='Paste JSON array here, e.g. [{"id": 1, "name": "Item"}]' class="flex-1 w-full bg-slate-950 border border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none min-h-[350px]"></textarea>
+      </div>
+
+      <!-- Output Column -->
+      <div class="flex flex-col space-y-2">
+        <label for="csvOutput" class="text-sm font-semibold text-slate-300">CSV Output</label>
+        <textarea id="csvOutput" readonly placeholder="Converted CSV data will appear here..." class="flex-1 w-full bg-slate-950 border border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-200 focus:outline-none resize-none min-h-[350px]"></textarea>
       </div>
     </div>
 
-    <div id="output-section" class="mt-8 bg-white p-6 rounded-lg shadow-sm border border-gray-200 hidden">
-      <h2 class="text-lg font-bold mb-2">CSV Output:</h2>
-      <textarea id="csv-output" rows="8" readonly class="w-full p-3 border border-gray-300 rounded-md font-mono text-sm bg-gray-50"></textarea>
-      
-      <div class="mt-4 flex justify-between items-center">
-        <button onclick="downloadCSV()" class="bg-green-600 hover:bg-green-700 text-white font-medium px-5 py-2.5 rounded-md transition-colors">Download CSV</button>
-        <div class="text-right">
-          <p class="text-xs text-gray-500 mb-1">Need batch processing over 10MB?</p>
-          <button onclick="alert('Stripe Live Link will be configured on Day 2!')" class="bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-md text-sm transition-colors">Upgrade to Pro ($4.99)</button>
-        </div>
-      </div>
+    <!-- Action Button -->
+    <div class="flex justify-center pt-2">
+      <button onclick="convertJsonToCsv()" class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-8 rounded-lg text-base shadow-lg hover:shadow-purple-500/20 transition-all cursor-pointer">
+        Convert to CSV
+      </button>
     </div>
   </main>
 
-  <footer class="bg-gray-100 border-t border-gray-200 py-4 text-center text-xs text-gray-500">
-    &copy; 2026 Data Tools. 100% Client-Side & Secure.
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 bg-slate-950 py-4 text-center text-xs text-slate-500">
+    <p>&copy; Data Tools. All processing remains entirely client-side.</p>
   </footer>
 
+  <!-- Converter Logic -->
   <script>
-    function convertData() {
-      const input = document.getElementById('json-input').value;
-      const status = document.getElementById('status-msg');
+    function convertJsonToCsv() {
+      const input = document.getElementById('jsonInput').value.trim();
+      const outputArea = document.getElementById('csvOutput');
+      
+      if (!input) {
+        outputArea.value = "Error: Input box is empty.";
+        return;
+      }
+
       try {
-        csv += keys.map(k => JSON.stringify(row[k] !== undefined && row[k] !== null ? row[k] : '')).join(',') + '\n';
-        if (!Array.isArray(json)) {
-          status.innerText = "Error: Input must be a JSON array of objects.";
-          status.className = "text-sm font-medium text-red-600";
+        // 1. Parse JSON safely
+        let parsed = JSON.parse(input);
+        
+        // If user pasted a single object, wrap it in an array
+        if (!Array.isArray(parsed)) {
+          if (typeof parsed === 'object' && parsed !== null) {
+            parsed = [parsed];
+          } else {
+            outputArea.value = "Error: JSON must be an array of objects or a single object.";
+            return;
+          }
+        }
+
+        if (parsed.length === 0) {
+          outputArea.value = "Error: JSON array is empty.";
           return;
         }
-        const keys = Object.keys(json[0]);
-        let csv = keys.join(',') + '\n';
-        json.forEach(row => {
-          csv += keys.map(k => JSON.stringify(row[k] || '')).join(',') + '\n';
-        });
-        document.getElementById('csv-output').value = csv;
-        document.getElementById('output-section').classList.remove('hidden');
-        status.innerText = "Conversion successful!";
-        status.className = "text-sm font-medium text-green-600";
-      } catch (e) {
-        status.innerText = "Error: Invalid JSON format.";
-        status.className = "text-sm font-medium text-red-600";
-      }
-    }
 
-    function downloadCSV() {
-      const text = document.getElementById('csv-output').value;
-      const blob = new Blob([text], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.setAttribute('href', url);
-      a.setAttribute('download', 'converted_data.csv');
-      a.click();
+        // 2. Extract all unique keys across all objects
+        const keys = Array.from(new Set(parsed.flatMap(obj => typeof obj === 'object' && obj !== null ? Object.keys(obj) : [])));
+
+        if (keys.length === 0) {
+          outputArea.value = "Error: No valid key-value pairs found in objects.";
+          return;
+        }
+
+        // 3. Build CSV Header
+        let csv = keys.map(k => `"${String(k).replace(/"/g, '""')}"`).join(',') + '\n';
+
+        // 4. Build CSV Rows
+        parsed.forEach(row => {
+          const line = keys.map(k => {
+            const val = row[k];
+            if (val === undefined || val === null) return '""';
+            if (typeof val === 'boolean' || typeof val === 'number') return val;
+            // Escape quotes and wrap strings/objects in double quotes
+            const str = typeof val === 'object' ? JSON.stringify(val) : String(val);
+            return `"${str.replace(/"/g, '""')}"`;
+          }).join(',');
+          csv += line + '\n';
+        });
+
+        outputArea.value = csv;
+
+      } catch (err) {
+        outputArea.value = "Error: Invalid JSON syntax. " + err.message;
+      }
     }
   </script>
 </body>
